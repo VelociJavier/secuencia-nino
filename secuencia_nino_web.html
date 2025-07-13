@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secuencia Niño - Rey León</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', sans-serif;
+      background: linear-gradient(to bottom, #f9d976, #f39f5a);
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #a1440e;
+      font-size: 2.5em;
+    }
+    #numero {
+      font-size: 3em;
+      margin: 20px;
+      color: #2a2a2a;
+    }
+    .opciones {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .boton-opcion {
+      font-size: 1.5em;
+      padding: 15px 25px;
+      border: none;
+      border-radius: 12px;
+      background-color: #ffcc00;
+      color: #3d2600;
+      box-shadow: 2px 2px 5px #00000055;
+      cursor: pointer;
+    }
+    .boton-opcion:hover {
+      background-color: #ffaa00;
+    }
+    #mensaje {
+      font-size: 1.5em;
+      margin-top: 20px;
+      color: #004400;
+    }
+  </style>
+</head>
+<body>
+  <h1>Secuencia Niño - Rey León</h1>
+  <div id="numero"></div>
+  <div class="opciones" id="opciones"></div>
+  <div id="mensaje"></div>
+
+  <script>
+    const tiempoMostrar = 2000; // milisegundos
+    const intentosTotales = 5;
+    const cantidadOpciones = 6;
+    const digitos = 2; // Cambiar a 1, 2 o 3 según dificultad
+
+    let aciertos = 0;
+    let ronda = 0;
+
+    function generarNumero(digitos) {
+      let min = digitos === 1 ? 1 : Math.pow(10, digitos - 1);
+      let max = Math.pow(10, digitos) - 1;
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function mostrarRonda() {
+      document.getElementById("mensaje").textContent = "";
+      const numeroCorrecto = generarNumero(digitos);
+      document.getElementById("numero").textContent = numeroCorrecto;
+      document.getElementById("opciones").innerHTML = "";
+
+      setTimeout(() => {
+        document.getElementById("numero").textContent = "???";
+        const opciones = [numeroCorrecto];
+
+        while (opciones.length < cantidadOpciones) {
+          let num = generarNumero(digitos);
+          if (!opciones.includes(num)) opciones.push(num);
+        }
+
+        // Mezclar opciones
+        opciones.sort(() => Math.random() - 0.5);
+
+        opciones.forEach(op => {
+          const btn = document.createElement("button");
+          btn.textContent = op;
+          btn.className = "boton-opcion";
+          btn.onclick = () => validarRespuesta(op, numeroCorrecto);
+          document.getElementById("opciones").appendChild(btn);
+        });
+      }, tiempoMostrar);
+    }
+
+    function validarRespuesta(respuesta, correcto) {
+      const mensaje = document.getElementById("mensaje");
+      if (respuesta === correcto) {
+        aciertos++;
+        mensaje.textContent = "¡Correcto! Rugido de alegría 🦁";
+        mensaje.style.color = "#008800";
+      } else {
+        mensaje.textContent = `Oh no, Simba se confundío... Era ${correcto}`;
+        mensaje.style.color = "#aa0000";
+      }
+      ronda++;
+
+      if (ronda < intentosTotales) {
+        setTimeout(mostrarRonda, 2000);
+      } else {
+        setTimeout(() => {
+          document.getElementById("numero").textContent = "Juego terminado";
+          document.getElementById("opciones").innerHTML = "";
+          mensaje.innerHTML = `Acertaste ${aciertos} de ${intentosTotales} 👏`;
+        }, 2000);
+      }
+    }
+
+    // Iniciar juego
+    mostrarRonda();
+  </script>
+</body>
+</html>
